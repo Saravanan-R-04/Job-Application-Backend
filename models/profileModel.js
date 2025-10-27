@@ -6,23 +6,19 @@ const profileSchema = new mongoose.Schema({
         ref:"users",
         required:true
     },
+    name:{
+        type:String,
+        required:true
+    },
     bio:{
         type:String,
         required:true
     },
-    skills:{
-        type:[String],
-        required:true
-    },
     experience:{
-        type:Number,
-        required:true
-    },
-    location:{
         type:String,
         required:true
     },
-    resumeURL:{
+    location:{
         type:String,
         required:true
     },
@@ -30,11 +26,15 @@ const profileSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    linkedURL:{
+    resume:{
         type:String,
         required:true
     },
-    githubURL:{
+    skills:{
+        type:String,
+        required:true
+    },
+    github:{
         type:String,
         required:true
     }

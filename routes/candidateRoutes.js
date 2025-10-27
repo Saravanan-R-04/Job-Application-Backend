@@ -1,24 +1,34 @@
 import express from 'express'
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { checkRoleMiddleware } from '../middlewares/checkRoleMiddleware.js';
-import { addBookMarkController, applyJobController, browseJobsController, createProfileController, deleteAppliedJob, deleteBookMarkController, getAppliedJobController, updateProfileController, viewBookMarkController } from '../controllers/candidateController.js';
+import { addBookMarkController, applyJobController, browseJobsController, createProfileController, deleteAppliedJob, deleteBookMarkController, getAppliedJobController, updateProfileController, viewBookMarkController,allJobsController, getProfileController,getAcceptedJobs, getRejectedJobs, getPendingJobs} from '../controllers/candidateController.js';
 
 export const candidateRoute = express.Router();
 
-candidateRoute.post("/create-profile",authMiddleware,checkRoleMiddleware(['candidate']),createProfileController)
+candidateRoute.post("/create-profile",authMiddleware,checkRoleMiddleware(['Candidate']),createProfileController)
 
-candidateRoute.put("/update-profile/:id",authMiddleware,checkRoleMiddleware(['candidate']),updateProfileController)
+candidateRoute.get("/get-profile",authMiddleware,checkRoleMiddleware(['Candidate']),getProfileController)
 
-candidateRoute.get("/browse-jobs",authMiddleware,checkRoleMiddleware(['candidate']),browseJobsController)
+candidateRoute.put("/update-profile/:id",authMiddleware,checkRoleMiddleware(['Candidate']),updateProfileController)
 
-candidateRoute.post("/apply-job",authMiddleware,checkRoleMiddleware(['candidate']),applyJobController)
+candidateRoute.get("/all-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),allJobsController)
 
-candidateRoute.get("/get-applied-jobs",authMiddleware,getAppliedJobController)
+candidateRoute.get("/browse-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),browseJobsController)
 
-candidateRoute.delete("/delete-job/:id",authMiddleware,checkRoleMiddleware(['candidate']),deleteAppliedJob)
+candidateRoute.post("/apply-job",authMiddleware,checkRoleMiddleware(['Candidate']),applyJobController)
 
-candidateRoute.post("/add-bookmark",authMiddleware,checkRoleMiddleware(['candidate']),addBookMarkController)
+candidateRoute.get("/get-applied-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),getAppliedJobController)
 
-candidateRoute.get("/view-bookmark",authMiddleware,checkRoleMiddleware(['candidate']),viewBookMarkController)
+candidateRoute.delete("/delete-job/:id",authMiddleware,checkRoleMiddleware(['Candidate']),deleteAppliedJob)
 
-candidateRoute.delete("/delete-bookmark/:id",authMiddleware,checkRoleMiddleware(['candidate']),deleteBookMarkController)
+candidateRoute.post("/add-bookmark/:id",authMiddleware,checkRoleMiddleware(['Candidate']),addBookMarkController)
+
+candidateRoute.get("/view-bookmark",authMiddleware,checkRoleMiddleware(['Candidate']),viewBookMarkController)
+
+candidateRoute.delete("/delete-bookmark/:id",authMiddleware,checkRoleMiddleware(['Candidate']),deleteBookMarkController)
+
+candidateRoute.get("/get-accepted-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),getAcceptedJobs)
+
+candidateRoute.get("/get-rejected-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),getRejectedJobs)
+
+candidateRoute.get("/get-pending-jobs",authMiddleware,checkRoleMiddleware(['Candidate']),getPendingJobs)

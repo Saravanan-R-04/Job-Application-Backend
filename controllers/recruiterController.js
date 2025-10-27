@@ -78,11 +78,34 @@ export const updateProfileController = async(req,res) =>
     }
 
 }
+export const getProfileController = async (req, res) => {
+  try {
+    const profileDetails = await recruiterProfileModel.findOne({ userId: req.user.id });
+
+    if (!profileDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile Not Found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile Fetched Successfully",
+      profileDetails
+    });
+  } catch (error) {
+    console.error(error.message);
+   
+   
+  }
+};
+
 
 export const createJobController = async(req,res) =>{
     try{
-        const{title,description,salary,location,tags}=req.body;
-        if(!title || !description || !salary || !location || !tags)
+        const{company,title,description,salary,location,skills}=req.body;
+        if(!company || !title || !description || !salary || !location || !skills)
         {
             return res.status(400).json({
                 success:false,
@@ -98,11 +121,12 @@ export const createJobController = async(req,res) =>{
             })
         }
         const newJob = new jobModel({
+            company,
             title,
             description,
             salary,
             location,
-            tags,
+            skills,
             createdBy:req.user.id
         })
         await newJob.save();
@@ -128,6 +152,7 @@ export const updateJobController = async(req,res) =>{
                 message:"No Job is posted"
             })
         }
+        existJob.company = req.body.company || existJob.company;
         existJob.title=req.body.title || existJob.title;
         existJob.description=req.body.description || existJob.description
         existJob.salary=req.body.salary || existJob.salary
@@ -171,7 +196,7 @@ export const deleteJobController = async(req,res) =>{
 
 export const getAllJobsController = async(req,res) =>{
     try{
-        const allJobs = await jobModel.find();
+        const allJobs = await jobModel.find({createdBy:req.user.id});
         if(!allJobs)
         {
             return res.status(400).json({
@@ -180,7 +205,7 @@ export const getAllJobsController = async(req,res) =>{
             })
         }
         return res.status(200).json({
-            success:false,
+            success:true,
             message:"All Jobs",
             allJobs
         })
@@ -200,18 +225,18 @@ export const jobApplicantController = async (req, res) => {
     
     const jobs = await jobModel.find({ createdBy: recruiterId });
 
-    const jobIds = jobs.map((job) => job.id);
+    const jobIds = jobs.map((job) => job._id);
 
     const applications = await applyjobModel
       .find({ jobID: { $in: jobIds } })
-      .populate("jobID", "title location") 
+      .populate("jobID", "title company salary location") 
       .populate("applicantId", "name email"); 
 
    
     res.status(200).json({
       success: true,
       totalApplications: applications.length,
-      data: applications,
+      data: applications,jobs
     });
   } catch (error) {
     console.error("Error in jobApplicantController:", error);
@@ -225,11 +250,18 @@ export const jobApplicantController = async (req, res) => {
 export const jobApplicantProfileController =async(req,res) =>{
     try{
         const Id=req.params.id;
-        const profile = await profileModel.findOne({userId:Id})
+        const profileData = await profileModel.findOne({userId:Id})
+        if(!profileData)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"Profile Not Found"
+            })
+        }
         return res.status(200).json({
             success:true,
             message:"Job Applicant Profile",
-            profile
+            profileData
         })
     }
     catch(error)
@@ -238,16 +270,10 @@ export const jobApplicantProfileController =async(req,res) =>{
     }
 }
 
-export const markJobController = async(req,res) =>{
+export const acceptJobController = async(req,res) =>{
     try{
         const Id=req.params.id;
-        const job=await applyjobModel.findById(Id).populate({
-            path:"jobID",
-            select:"title description salary location"
-        }).populate({
-            path:"applicantId",
-            select:"name email"
-        });
+        const job=await applyjobModel.findById(Id)
         if(!job)
         {
             return res.status(400).json({
@@ -256,10 +282,32 @@ export const markJobController = async(req,res) =>{
             })
         }
         job.status="accepted";
+        await job.save();
         return res.status(200).json({
             success:false,
             message:"Job Marked Successfully",
-            job
+        })
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+export const rejectJobController = async(req,res) =>{
+    try{
+        const Id=req.params.id;
+        const job=await applyjobModel.findById(Id)
+        if(!job)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"Invalid Job"
+            })
+        }
+        job.status="rejected";
+        await job.save();
+        return res.status(200).json({
+            success:true,
+            message:"Job Marked Successfully",
         })
     }
     catch(error){

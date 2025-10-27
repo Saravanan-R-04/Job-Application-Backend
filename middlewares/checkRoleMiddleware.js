@@ -1,10 +1,9 @@
 export const checkRoleMiddleware = (allowedRoles) =>{
     return (req,res,next)=>{
         const userRole=req.user.role;
-        if(!allowedRoles.includes(userRole) || !allowedRoles.includes(userRole)
-        || !allowedRoles.includes(userRole))
+        if(!allowedRoles.includes(userRole))
         {
-            res.status(400).json({
+            res.status(403).json({
                 success:false,
                 message:"You don't have permission"
             })

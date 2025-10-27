@@ -8,10 +8,6 @@ const applyjobSchema = new mongoose.Schema({
         type:mongoose.SchemaTypes.ObjectId,
         ref:"users"
     },
-    resume:{
-        type:String,
-        required:true
-    },
     status:{
         type:String,
         default:"pending"

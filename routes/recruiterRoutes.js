@@ -1,24 +1,28 @@
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { checkRoleMiddleware } from "../middlewares/checkRoleMiddleware.js";
-import { createJobController,updateJobController,deleteJobController,getAllJobsController, jobApplicantController, jobApplicantProfileController, markJobController, createProfileController, updateProfileController } from "../controllers/recruiterController.js";
+import { createJobController,updateJobController,deleteJobController,getAllJobsController, jobApplicantController, jobApplicantProfileController, acceptJobController,rejectJobController, createProfileController, updateProfileController,getProfileController} from "../controllers/recruiterController.js";
 import express from 'express'
 
 export const recruiterRoute = express.Router();
 
-recruiterRoute.post("/create-profile",authMiddleware,checkRoleMiddleware(['recruiter']),createProfileController)
+recruiterRoute.post("/create-profile",authMiddleware,checkRoleMiddleware(['Recruiter']),createProfileController)
 
-recruiterRoute.put("/update-profile/:id",authMiddleware,checkRoleMiddleware(['recruiter']),updateProfileController)
+recruiterRoute.put("/update-profile/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),updateProfileController)
 
-recruiterRoute.post("/create-job",authMiddleware,checkRoleMiddleware(['recruiter']),createJobController)
+recruiterRoute.get("/r-get-profile",authMiddleware,checkRoleMiddleware(['Recruiter']),getProfileController)
 
-recruiterRoute.put("/update-job/:id",authMiddleware,checkRoleMiddleware(['recruiter']),updateJobController)
+recruiterRoute.post("/create-job",authMiddleware,checkRoleMiddleware(['Recruiter']),createJobController)
 
-recruiterRoute.delete("/delete-job/:id",authMiddleware,checkRoleMiddleware(['recruiter']),deleteJobController)
+recruiterRoute.put("/update-job/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),updateJobController)
 
-recruiterRoute.get("/get-all-jobs",authMiddleware,checkRoleMiddleware(['recruiter']),getAllJobsController)
+recruiterRoute.delete("/delete-job/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),deleteJobController)
+
+recruiterRoute.get("/get-all-jobs",authMiddleware,checkRoleMiddleware(['Recruiter']),getAllJobsController)
 
 recruiterRoute.get("/job-applicants",authMiddleware,jobApplicantController)
 
-recruiterRoute.get("/applicant-profile/:id",authMiddleware,checkRoleMiddleware(['recruiter']),jobApplicantProfileController)
+recruiterRoute.get("/applicant-profile/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),jobApplicantProfileController)
 
-recruiterRoute.put("/mark-job/:id",authMiddleware,checkRoleMiddleware(['recruiter']),markJobController)
+recruiterRoute.put("/accept-job/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),acceptJobController)
+
+recruiterRoute.put("/reject-job/:id",authMiddleware,checkRoleMiddleware(['Recruiter']),rejectJobController)
